@@ -61,18 +61,18 @@ function wait_for_frames(await, frames)
 end
 
 --[[ OUTPUT
-Starting async
-Waiting 1000 frames
-Async was started, I'm not waiting for it
-All done here
-1
-2
-3
-4
-5
-6
-7
-8
-9
+	Starting async
+	Waiting 1000 frames
+	Async was started, I'm not waiting for it
+	All done here
+	1
+	2
+	3
+	4
+	5
+	6
+	7
+	8
+	9
 ]]
 ```
