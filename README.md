@@ -39,7 +39,7 @@ end
 
 function do_something()
 	print("Starting async")
-	async(do_async, 20)
+	async(do_async, 9)
 	print("Async was started, I'm not waiting for it")
 end
 
@@ -59,4 +59,20 @@ function wait_for_frames(await, frames)
 	end
 	await.resolve("All done here")
 end
+
+--[[ OUTPUT
+Starting async
+Waiting 1000 frames
+Async was started, I'm not waiting for it
+All done here
+1
+2
+3
+4
+5
+6
+7
+8
+9
+]]
 ```
