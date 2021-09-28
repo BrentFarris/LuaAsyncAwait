@@ -28,3 +28,35 @@ function async(routine, ...)
 	coroutine.resume(f, await, ...)
 end
 ```
+
+## Usage
+```lua
+local frameCounter = 0
+--- Imagine this funciton is called every frame in a game engine
+function update_frame()
+	frameCounter = frameCounter + 1
+end
+
+function do_something()
+	print("Starting async")
+	async(do_async, 20)
+	print("Async was started, I'm not waiting for it")
+end
+
+function do_async(await, countTo)
+	print("Waiting 1000 frames")
+	local msg = await(wait_for_frames, 1000)
+	print(msg)
+	for i=1, countTo do
+		print("Printing number", i)
+	end
+	print("Async work complete")
+end
+
+function wait_for_frames(await, frames)
+	while frameCounter < frames do
+		--Nothing
+	end
+	await.resolve("All done here")
+end
+```
