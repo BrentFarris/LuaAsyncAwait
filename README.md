@@ -41,14 +41,17 @@ function update_frame()
 	frameCounter = frameCounter + 1
 end
 
-function do_something()
+-- Imagine this function is called once when the game starts
+function init_game()
 	print("Starting async")
 	async(do_async, 9)
 	print("Async was started, I'm not waiting for it")
 end
 
+-- The async function to be called from anywhere in the game
 function do_async(await, countTo)
 	print("Waiting 1000 frames")
+	-- The code stops here and waits for async.resolve or async.reject before continuing
 	local msg = await(wait_for_frames, 1000)
 	print(msg)
 	for i=1, countTo do
@@ -57,10 +60,13 @@ function do_async(await, countTo)
 	print("Async work complete")
 end
 
+-- The function to be awaited on, notice `await` is the first argument
 function wait_for_frames(await, frames)
+	-- Basically wait 1000 frames in the game
 	while frameCounter < frames do
 		--Nothing
 	end
+	-- This will continue to the caller and return the argument as the result
 	await.resolve("All done here")
 end
 
