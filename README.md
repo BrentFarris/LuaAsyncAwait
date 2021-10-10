@@ -1,4 +1,4 @@
-# Async Await inside of lua
+# Async Await Inside of Lua
 Async/Await for Lua in just a few lines of code
 
 ## Summary
