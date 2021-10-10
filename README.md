@@ -20,6 +20,7 @@ function async(routine, ...)
 		wait(self, ...)
 		if not self.completed then coroutine.yield(f, ...) end
 		if self.error then assert(false, self.error) end
+		self.completed = false
 		local newResult = self.result
 		self.result = lastResult
 		return newResult
