@@ -1,5 +1,8 @@
-# LuaAsyncAwait
+# Lua Async/Await
 Async/Await for Lua in just a few lines of code
+
+## Summary
+Using Lua coroutines we can make async/await functionality which is quite useful for everything from HTTP requests to UI updates. The key to this is the `await` table that is passed around. The code will essentially freeze on the line where you call `await(...)` until the `await.resolve(...)` function is called. When you call `await(...)` it will pass itself into the function call so that you can call either the `resolve` or `reject` functions. This also works with async functions calling other async functions and waiting on them.
 
 ## Async/Await in Lua
 ```lua
