@@ -36,13 +36,14 @@ end
 ```lua
 function test_async()
         print("Starting async")
-        async(do_async, 6)
+        async(do_async, "https://github.com/BrentFarris/LuaAsyncAwait")
         print("Async was started, I'm not waiting for it")
 end
 
 local fakeNet = nil
 -- The async function to be called from anywhere in the game
-function do_async(await, countTo)
+function do_async(await, addr)
+        print("Doing a fake network request to: "..addr)
         local req = {
                 done = function(res) end,
                 sim = coroutine.create(function()
@@ -64,6 +65,12 @@ function do_async(await, countTo)
         print("Async work complete")
 end
 
+-- The function to be awaited on, notice `await` is the first argument
+function wait_for_net(await, req)
+        req.done = function(res) await.resolve(res) end
+        print("Going to wait on the network to finish...")
+end
+
 test_async()
 
 local clock = os.clock
@@ -75,12 +82,13 @@ while clock() - d0 < delay do
 end
 
 --[[ OUTPUT
-Starting async
-Doing fake network request
-Going to wait on the network to finish...
-Async was started, I'm not waiting for it
+	Starting async
+	Doing a fake network request to: https://github.com/BrentFarris/LuaAsyncAwait
+	Doing fake network request
+	Going to wait on the network to finish...
+	Async was started, I'm not waiting for it
 -- 3 seconds pass
-Message from fake network: Hello from the fake internet
-Async work complete
+	Message from fake network: Hello from the fake internet
+	Async work complete
 ]]
 ```
