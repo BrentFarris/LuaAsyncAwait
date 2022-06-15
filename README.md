@@ -34,54 +34,53 @@ end
 
 ## Usage
 ```lua
-local frameCounter = 0
---- Imagine this funciton is called every frame in a game engine
-function update_frame()
-	frameCounter = frameCounter + 1
+function test_async()
+        print("Starting async")
+        async(do_async, 6)
+        print("Async was started, I'm not waiting for it")
 end
 
--- Imagine this function is called once when the game starts
-function init_game()
-	print("Starting async")
-	async(do_async, 9)
-	print("Async was started, I'm not waiting for it")
-end
-
+local fakeNet = nil
 -- The async function to be called from anywhere in the game
 function do_async(await, countTo)
-	print("Waiting 1000 frames")
-	-- The code stops here and waits for async.resolve or async.reject before continuing
-	local msg = await(wait_for_frames, 1000)
-	print(msg)
-	for i=1, countTo do
-		print("Printing number", i)
-	end
-	print("Async work complete")
+        local req = {
+                done = function(res) end,
+                sim = coroutine.create(function()
+                        local clock = os.clock
+                        local t0 = clock()
+                        local fakeDelay = t0 + 3.0 -- Seconds (slow network :P)
+                        while clock() - t0 < fakeDelay do
+                                coroutine.yield()
+                        end
+                        -- Got response from network
+                        fakeNet.done("Hello from the fake internet")
+                end)
+        }
+        fakeNet = req
+        print("Doing fake network request")
+        -- The code stops here and waits for async.resolve or async.reject before continuing
+        local msg = await(wait_for_net, req)
+        print("Message from fake network: "..msg)
+        print("Async work complete")
 end
 
--- The function to be awaited on, notice `await` is the first argument
-function wait_for_frames(await, frames)
-	-- Basically wait 1000 frames in the game
-	while frameCounter < frames do
-		--Nothing
-	end
-	-- This will continue to the caller and return the argument as the result
-	await.resolve("All done here")
+test_async()
+
+local clock = os.clock
+local d0 = clock()
+local delay = d0 + 5.0
+while clock() - d0 < delay do
+        -- Just keep the program alive
+        coroutine.resume(fakeNet.sim)
 end
 
 --[[ OUTPUT
-	Starting async
-	Waiting 1000 frames
-	Async was started, I'm not waiting for it
-	All done here
-	1
-	2
-	3
-	4
-	5
-	6
-	7
-	8
-	9
+Starting async
+Doing fake network request
+Going to wait on the network to finish...
+Async was started, I'm not waiting for it
+-- 3 seconds pass
+Message from fake network: Hello from the fake internet
+Async work complete
 ]]
 ```
