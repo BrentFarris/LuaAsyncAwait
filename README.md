@@ -58,7 +58,6 @@ function do_async(await, addr)
                 end)
         }
         fakeNet = req
-        print("Doing fake network request")
         -- The code stops here and waits for async.resolve or async.reject before continuing
         local msg = await(wait_for_net, req)
         print("Message from fake network: "..msg)
@@ -84,7 +83,6 @@ end
 --[[ OUTPUT
 	Starting async
 	Doing a fake network request to: https://github.com/BrentFarris/LuaAsyncAwait
-	Doing fake network request
 	Going to wait on the network to finish...
 	Async was started, I'm not waiting for it
 -- 3 seconds pass
